@@ -9,6 +9,11 @@ verify_ssl = true
 flask-restful = "*"
 sqlalchemy = "*"
 python-dotenv = "*"
+flask-sqlalchemy = "*"
+flask = "*"
+psycopg2-binary = "*"
+r = "*"
+requests = "==2.7.0"
 
 [requires]
 python_version = "3.6"
