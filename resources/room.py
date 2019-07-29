@@ -1,6 +1,7 @@
 from flask_restful import Resource
 from models.room import RoomModel
 
+
 class Room(Resource):
 
     def get(self, id):
