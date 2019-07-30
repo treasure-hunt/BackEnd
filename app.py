@@ -1,4 +1,5 @@
 import os
+from db import db
 from dotenv import load_dotenv
 from flask import Flask
 from flask_restful import Api
@@ -13,6 +14,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['PROPAGATE_EXCEPTIONS'] = True
 api = Api(app)
 
+db.init_app(app)
 
 @app.before_first_request
 def create_tables():
@@ -23,6 +25,4 @@ api.add_resource(Traverse, '/traverse/<string:direction>')
 
 
 if __name__ == '__main__':
-    from db import db
-    db.init_app(app)
     app.run(port=os.getenv("PORT"), debug=True)
