@@ -5,6 +5,7 @@ from flask import Flask
 from flask_cors import CORS
 from flask_restful import Api
 from resources.room import Room
+from resources.rooms import Rooms
 from resources.traverse import Traverse
 
 load_dotenv()
@@ -22,6 +23,7 @@ db.init_app(app)
 def create_tables():
     db.create_all()
 
+api.add_resource(Rooms, '/rooms')
 api.add_resource(Room, '/room/<string:id>')
 api.add_resource(Traverse, '/traverse/<string:direction>')
 

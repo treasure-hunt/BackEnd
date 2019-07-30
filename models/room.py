@@ -15,7 +15,7 @@ class RoomModel(db.Model):
     e = db.Column(db.Integer, nullable=True)
     s = db.Column(db.Integer, nullable=True)
     elevation = db.Column(db.Integer, nullable=True)
-    terrain = db.Column(db.String(365), nullable=False)
+    terrain = db.Column(db.String(80), nullable=False)
 
     def __init__(self, id, title, description, x, y, n, w, e, s, elevation, terrain):
         self.id = id
@@ -47,6 +47,10 @@ class RoomModel(db.Model):
     @classmethod
     def find_by_id(cls, id):
         return cls.query.filter_by(id=id).first()
+
+    @classmethod
+    def find_all(cls):
+        return cls.query.all()
 
     def save_to_db(self):
         db.session.add(self)
