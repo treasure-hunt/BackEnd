@@ -29,7 +29,7 @@ class Traverse(Resource):
                 player_status_response['room_id'])
             # If we don't have the room in our database, we haven't seen it before. So we add it to our database.
             if not found_room:
-                # room_coordinates turns "(32,45)" -> [32, 45]
+                # room_coordinates turns "(32,45)" -> ["32", "45"]
                 room_coordinates = re.findall(
                     r"\d+", player_status_response['coordinates'])
                 new_room_data = {
@@ -58,7 +58,7 @@ class Traverse(Resource):
             # Room is found
             else:
                 # Check if we have the next room's id that the player is traveling to. If we do, travel there and return response to user.
-                if move in found_room.json()["exits"]:
+                if move in found_room.json()["exits"] and found_room.json()["exits"][move]:
                     next_room = found_room.json()["exits"][move]
                     player_travel_request = requests.post('https://lambda-treasure-hunt.herokuapp.com/api/adv/move/', json={"direction": move, "next_room_id": str(next_room)}, headers={'authorization': token}).json()
                     return player_travel_request, 200
