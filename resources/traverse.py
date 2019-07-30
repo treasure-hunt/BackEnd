@@ -66,8 +66,31 @@ class Traverse(Resource):
                 else:
                     player_travel_request = requests.post('https://lambda-treasure-hunt.herokuapp.com/api/adv/move/', json={"direction": move}, headers={'authorization': token}).json()
                     try:
+                        # Create new room we just traveled into, and save the direction to the previous room.
                         new_room_id = player_travel_request['room_id']
+                        room_coordinates = re.findall(
+                            r"\d+", player_travel_request['coordinates'])
+                        new_room_data = {
+                            "id": player_travel_request['room_id'],
+                            "title": player_travel_request['title'],
+                            "description": player_travel_request['description'],
+                            "x": int(room_coordinates[0]),
+                            "y": int(room_coordinates[1]),
+                            "n": None,
+                            "w": None,
+                            "e": None,
+                            "s": None,
+                        }
+                        create_new_found_room = RoomModel(**new_room_data)
+                        opposite_dirs = {
+                            "n": "s",
+                            "e": "w",
+                            "s": "n",
+                            "w": "e"
+                        }
+                        setattr(create_new_found_room, opposite_dirs[move], player_status_response["room_id"])
                         setattr(found_room, move, new_room_id)
+                        create_new_found_room.save_to_db()
                         found_room.save_to_db()
                         return player_travel_request, 200
                     except KeyError:
