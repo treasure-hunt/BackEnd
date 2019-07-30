@@ -2,6 +2,7 @@ import os
 from db import db
 from dotenv import load_dotenv
 from flask import Flask
+from flask_cors import CORS
 from flask_restful import Api
 from resources.room import Room
 from resources.traverse import Traverse
@@ -9,6 +10,7 @@ from resources.traverse import Traverse
 load_dotenv()
 
 app = Flask(__name__)
+CORS(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("DATABASE_URL")
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['PROPAGATE_EXCEPTIONS'] = True
