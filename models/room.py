@@ -14,8 +14,10 @@ class RoomModel(db.Model):
     w = db.Column(db.Integer, nullable=True)
     e = db.Column(db.Integer, nullable=True)
     s = db.Column(db.Integer, nullable=True)
+    elevation = db.Column(db.Integer, nullable=True)
+    terrain = db.Column(db.String(365), nullable=False)
 
-    def __init__(self, id, title, description, x, y, n, w, e, s):
+    def __init__(self, id, title, description, x, y, n, w, e, s, elevation, terrain):
         self.id = id
         self.title = title
         self.description = description
@@ -25,13 +27,17 @@ class RoomModel(db.Model):
         self.e = e
         self.w = w
         self.s = s
+        self.elevation = elevation
+        self.terrain = terrain
 
     def json(self):
         return {'id': self.id,
                 'title': self.title,
                 'description': self.description,
                 'coords': {'x': self.x, 'y': self.y},
-                'exits': {'n': self.n, 'w': self.w, 'e': self.e, 's': self.s}
+                'exits': {'n': self.n, 'w': self.w, 'e': self.e, 's': self.s},
+                'elevation': self.elevation,
+                'terrain': self.terrain
                 }
 
     @classmethod

@@ -49,6 +49,9 @@ class Traverse(Resource):
                     "w": None,
                     "e": None,
                     "s": None,
+                    "terrain": player_status_response['terrain'],
+                    "elevation": player_status_response['elevation']
+                    
                 }
                 found_room = RoomModel(**new_room_data)
 
@@ -72,6 +75,8 @@ class Traverse(Resource):
                             "w": None,
                             "e": None,
                             "s": None,
+                            "terrain": player_travel_request['terrain'],
+                            "elevation": player_travel_request['elevation']
                         }
                         traveled_into_room = RoomModel(**traveled_into_room_data)
 
@@ -110,6 +115,8 @@ class Traverse(Resource):
                                 "w": None,
                                 "e": None,
                                 "s": None,
+                                "terrain": player_travel_request['terrain'],
+                                "elevation": player_travel_request['elevation']
                             }
                             new_found_room = RoomModel(**new_room_data)
 
