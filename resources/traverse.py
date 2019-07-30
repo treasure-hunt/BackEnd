@@ -66,6 +66,7 @@ class Traverse(Resource):
                 else:
                     player_travel_request = requests.post('https://lambda-treasure-hunt.herokuapp.com/api/adv/move/', json={"direction": move}, headers={'authorization': token}).json()
                     try:
+                        new_room_id = player_travel_request['room_id']
                         setattr(found_room, move, new_room_id)
                         found_room.save_to_db()
                         return player_travel_request, 200
