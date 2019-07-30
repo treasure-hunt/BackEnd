@@ -1,0 +1,8 @@
+flask-restful
+sqlalchemy
+python-dotenv
+flask-sqlalchemy
+flask
+psycopg2-binary
+requests
+uwsgi
