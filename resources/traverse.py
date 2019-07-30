@@ -16,6 +16,13 @@ class Traverse(Resource):
         if not direction:
             return {'error': True, 'message': 'You must provide a direction. N, E, S, or W.'}, 400
 
+        opposite_dirs = {
+            "n": "s",
+            "e": "w",
+            "s": "n",
+            "w": "e"
+        }
+
         move = direction.lower()
         # Get the room the player is currently in:
         player_status_response = requests.get('https://lambda-treasure-hunt.herokuapp.com/api/adv/init/', headers={'authorization': token}).json()
@@ -49,7 +56,26 @@ class Traverse(Resource):
                 player_travel_request = requests.post('https://lambda-treasure-hunt.herokuapp.com/api/adv/move/', json={"direction": move}, headers={'authorization': token}).json()
                 try:
                     new_room_id = player_travel_request['room_id']
-                    # found_room[move] = new_room_id
+                    traveled_into_room = RoomModel.find_by_id(new_room_id)
+                    print(traveled_into_room)
+                    if not traveled_into_room:
+                        # Create room record for the room we just traveled into if not found
+                        new_room_coordinates = re.findall(
+                        r"\d+", player_travel_request['coordinates'])
+                        traveled_into_room_data = {
+                            "id": new_room_id,
+                            "title": player_travel_request['title'],
+                            "description": player_travel_request['description'],
+                            "x": int(new_room_coordinates[0]),
+                            "y": int(new_room_coordinates[1]),
+                            "n": None,
+                            "w": None,
+                            "e": None,
+                            "s": None,
+                        }
+                        traveled_into_room = RoomModel(**traveled_into_room_data)
+
+                    setattr(traveled_into_room, opposite_dirs[move], found_room.json()['id'])
                     setattr(found_room, move, new_room_id)
                     found_room.save_to_db()
                     return player_travel_request, 200
@@ -58,7 +84,8 @@ class Traverse(Resource):
             # Room is found
             else:
                 # Check if we have the next room's id that the player is traveling to. If we do, travel there and return response to user.
-                if move in found_room.json()["exits"] and found_room.json()["exits"][move]:
+                if move in found_room.json()["exits"] and found_room.json()["exits"][move] is not None:
+                    print('we have current room, and next.')
                     next_room = found_room.json()["exits"][move]
                     player_travel_request = requests.post('https://lambda-treasure-hunt.herokuapp.com/api/adv/move/', json={"direction": move, "next_room_id": str(next_room)}, headers={'authorization': token}).json()
                     return player_travel_request, 200
@@ -67,30 +94,28 @@ class Traverse(Resource):
                     player_travel_request = requests.post('https://lambda-treasure-hunt.herokuapp.com/api/adv/move/', json={"direction": move}, headers={'authorization': token}).json()
                     try:
                         # Create new room we just traveled into, and save the direction to the previous room.
-                        new_room_id = player_travel_request['room_id']
-                        room_coordinates = re.findall(
-                            r"\d+", player_travel_request['coordinates'])
-                        new_room_data = {
-                            "id": player_travel_request['room_id'],
-                            "title": player_travel_request['title'],
-                            "description": player_travel_request['description'],
-                            "x": int(room_coordinates[0]),
-                            "y": int(room_coordinates[1]),
-                            "n": None,
-                            "w": None,
-                            "e": None,
-                            "s": None,
-                        }
-                        create_new_found_room = RoomModel(**new_room_data)
-                        opposite_dirs = {
-                            "n": "s",
-                            "e": "w",
-                            "s": "n",
-                            "w": "e"
-                        }
-                        setattr(create_new_found_room, opposite_dirs[move], player_status_response["room_id"])
+                        print('we have current room, not next')
+                        new_found_room = RoomModel.find_by_id(player_travel_request["room_id"])
+                        if not new_found_room:
+                            new_room_id = player_travel_request['room_id']
+                            room_coordinates = re.findall(
+                                r"\d+", player_travel_request['coordinates'])
+                            new_room_data = {
+                                "id": new_room_id,
+                                "title": player_travel_request['title'],
+                                "description": player_travel_request['description'],
+                                "x": int(room_coordinates[0]),
+                                "y": int(room_coordinates[1]),
+                                "n": None,
+                                "w": None,
+                                "e": None,
+                                "s": None,
+                            }
+                            new_found_room = RoomModel(**new_room_data)
+
+                        setattr(new_found_room, opposite_dirs[move], player_status_response["room_id"])
                         setattr(found_room, move, new_room_id)
-                        create_new_found_room.save_to_db()
+                        new_found_room.save_to_db()
                         found_room.save_to_db()
                         return player_travel_request, 200
                     except KeyError:
