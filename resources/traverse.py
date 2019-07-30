@@ -101,8 +101,8 @@ class Traverse(Resource):
                         # Create new room we just traveled into, and save the direction to the previous room.
                         print('we have current room, not next')
                         new_found_room = RoomModel.find_by_id(player_travel_request["room_id"])
+                        new_room_id = player_travel_request['room_id']
                         if not new_found_room:
-                            new_room_id = player_travel_request['room_id']
                             room_coordinates = re.findall(
                                 r"\d+", player_travel_request['coordinates'])
                             new_room_data = {
