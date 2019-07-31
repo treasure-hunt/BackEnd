@@ -35,17 +35,13 @@ class AutoTravel(Thread):
                     # Only register next move if the player is passed cooldown.
                     if int(time.time()) < player_data['nextAvailableMove'] + 2:
                         continue
-                    print(player_data["currentPath"], 'player path yeet')
                     player_path = json.loads(player_data["currentPath"])["path"]
                     # Player has a path, travel based on it.
-                    print(player_path, 'path')
                     if len(player_path) > 0:
                         direction = player_path.pop(0)
                         traverse_to_room = Traverse.TraverseOnce(player_data['password'], direction)
                         traverse_to_room = traverse_to_room[0]
-                        print(traverse_to_room)
                         if len(traverse_to_room['errors']) > 0:
-                            print('crap...')
                             setattr(player, 'nextAvailableMove', (int(time.time()) + int(traverse_to_room['cooldown'])))
                             player.save_to_db()
                             continue
@@ -79,35 +75,28 @@ class AutoTravel(Thread):
                         setattr(player, 'nextAvailableMove', (int(time.time()) + int(traverse_to_room['cooldown'])))
                         setattr(player, 'currentRoomId', traverse_to_room['room_id'])
                         player.save_to_db()
-                        print(f"player traveled {direction} to {traverse_to_room['room_id']}")
                         continue
                     # Check if any exits are unexplored by our database.
                     for direction in directions:
                         if current_room_data['exits'][direction] == '?':
                             # move to that room.
-                            print('Moving directions.')
                             traverse_to_room = Traverse.TraverseOnce(player_data['password'], direction)
                             traverse_to_room = traverse_to_room[0]
                             if len(traverse_to_room['errors']) > 0:
-                                print('crap...')
                                 setattr(player, 'nextAvailableMove', (int(time.time()) + int(traverse_to_room['cooldown'])))
                                 player.save_to_db()
                                 continue
                             setattr(player, 'nextAvailableMove', int(time.time()) + traverse_to_room['cooldown'])
                             setattr(player, 'currentRoomId', traverse_to_room['room_id'])
                             player.save_to_db()
-                            print(f"player traveled {direction} to {traverse_to_room['room_id']}")
                             continue
                     
                     # No unexplored directions found - get shortest path to room that DOES have an unexplored exit/room
                     player = PlayerModel.find_by_password(player_data['password'])
                     player_data = player.json()
-                    print(player_data['currentRoomId'], 'CURRENT ROOM ID AS OF PATH GENERATION')
                     travel_path = self.GraphTraversal.path_to_unexplored(player_data['currentRoomId'])
-                    print(travel_path, "new path")
                     setattr(player, 'currentPath', json.dumps(travel_path))
                     player.save_to_db()
-                    print(f"new path set for player")
                     # return
 
                 
