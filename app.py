@@ -26,7 +26,7 @@ def create_tables():
     db.create_all()
 
 # Start our AutoTravel process on a separate "thread"
-AutoTravel(app)
+# AutoTravel(app)
 
 
 api.add_resource(Rooms, '/rooms')
