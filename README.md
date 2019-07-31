@@ -9,7 +9,7 @@ authorization: "token TOKEN_KEY_HERE"
 ```
 
 ### Move a single direction once
-Endpoint: `/traverse/<direction>`
+Endpoint: POST `/traverse/<direction>`
 Direction must be `n` `e` `s` or `w` (not case sensitive). If you input a different direction or one that is not possible to move in you will simply be told that there is no room in that direction. We halt your request so you do not get a cooldown for inputting an incorrect direction.
 
 Response:
@@ -38,7 +38,7 @@ Response:
 ```
 
 ### Get all rooms
-Endpoint: `/rooms`
+Endpoint: GET `/rooms`
 Returns every single room with the description/title, coordinates, and the resulting room for every exit. Null in an exit means we either haven't explored it, or there is no exit that direction.
 
 Response:
@@ -83,7 +83,7 @@ Response:
 ```
 
 ### Get single room
-Endpoint: `/room/<id or name>`
+Endpoint: GET `/room/<id or name>`
 Returns the room based on the provided id or name.
 
 Response:
@@ -105,5 +105,29 @@ Response:
     },
     "elevation": null,
     "terrain": null
+}
+```
+
+### Start Auto Traversing
+Endpoint: POST `/autotraverse`
+Your character will start exploring maps that we do not have in our database.
+
+Response:
+
+```
+{
+    "Message": "Auto Traverse has started."
+}
+```
+
+### Stop Auto Traversing
+Endpoint: DELETE `/autotraverse`
+Your character will stop auto traversing the unexplored rooms in our database. Gives up control and stops using your Token.
+
+Response:
+
+```
+{
+    "Message": "Auto Traverse has been stopped."
 }
 ```
