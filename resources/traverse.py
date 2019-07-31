@@ -21,7 +21,6 @@ class Traverse(Resource):
 
     @classmethod
     def TraverseOnce(self, token, move):
-        print(1)
         opposite_dirs = {
             "n": "s",
             "e": "w",
@@ -32,13 +31,10 @@ class Traverse(Resource):
         # Get the room the player is currently in:
         player_status_response = requests.get(
             'https://lambda-treasure-hunt.herokuapp.com/api/adv/init/', headers={'authorization': token}).json()
-        print(2)
         if len(player_status_response['errors']) > 0:
-            print(player_status_response)
             return player_status_response, 400
         time.sleep(1)
         # if the direction the player wants to move is in their current rooms direction list (if its a possible direction to move)
-        print(4)
         if move in player_status_response["exits"]:
             # See if we have the players current room in our database.
             found_room = RoomModel.find_by_id(
@@ -77,7 +73,6 @@ class Traverse(Resource):
                 try:
                     new_room_id = player_travel_request['room_id']
                     traveled_into_room = RoomModel.find_by_id(new_room_id)
-                    print(traveled_into_room)
                     if not traveled_into_room:
                         # Create room record for the room we just traveled into if not found
                         new_room_coordinates = re.findall(
@@ -115,7 +110,6 @@ class Traverse(Resource):
             else:
                 # Check if we have the next room's id that the player is traveling to. If we do, travel there and return response to user.
                 if move in found_room.json()["exits"] and found_room.json()["exits"][move] is not None and found_room.json()["exits"][move] is not "?":
-                    print('we have current room, and next.')
                     next_room = found_room.json()["exits"][move]
                     player_travel_request = requests.post('https://lambda-treasure-hunt.herokuapp.com/api/adv/move/', json={
                                                           "direction": move, "next_room_id": str(next_room)}, headers={'authorization': token}).json()
@@ -126,7 +120,6 @@ class Traverse(Resource):
                                                           "direction": move}, headers={'authorization': token}).json()
                     try:
                         # Create new room we just traveled into, and save the direction to the previous room.
-                        print('we have current room, not next')
                         new_found_room = RoomModel.find_by_id(
                             player_travel_request["room_id"])
                         new_room_id = player_travel_request['room_id']

@@ -7,7 +7,6 @@ class GraphTraversal:
 
     # BFS to find path.
     def path_to_target(self, current_room, target_room): # id's of rooms passed in.
-        print('Creating Path', current_room, target_room)
         all_rooms = RoomModel.find_all()
         rooms_dict = {}
         # make all rooms represent their JSON object, and insert into rooms dict.
@@ -39,7 +38,6 @@ class GraphTraversal:
 
     # BFS to find path.
     def path_to_unexplored(self, current_room):  # id's of rooms passed in.
-        print('Creating Path', current_room)
         all_rooms = RoomModel.find_all()
         rooms_dict = {}
         # make all rooms represent their JSON object, and insert into rooms dict.
@@ -59,11 +57,9 @@ class GraphTraversal:
                 if prev_room not in visited_rooms:
                     visited_rooms.add(prev_room)
                     for exit_dir in rooms_dict[str(prev_room)]['exits']:
-                        print(rooms_dict[str(prev_room)]['exits'][exit_dir])
                         new_path = current_path[:]
                         new_path.append(rooms_dict[str(prev_room)]['exits'][exit_dir])
                         if rooms_dict[str(prev_room)]['exits'][exit_dir] == '?':
-                            print(rooms_dict[str(prev_room)]['exits'][exit_dir])
                             path = {"path": self.create_path(rooms_dict, current_path)}
                             return path
                         else:
@@ -80,7 +76,6 @@ class GraphTraversal:
             targetId = path[index + 1]
             for pathway in current_paths:
                 if rooms[str(path[index])]['exits'][pathway] == targetId:
-                    print(pathway)
                     directions.append(pathway)
             
             index += 1
