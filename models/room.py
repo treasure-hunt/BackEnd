@@ -10,10 +10,10 @@ class RoomModel(db.Model):
     x = db.Column(db.Integer, nullable=False)  # Room coordinate
     y = db.Column(db.Integer, nullable=False)  # Room coordinate
     # Gets id of room to the north if any.
-    n = db.Column(db.Integer, nullable=True)
-    w = db.Column(db.Integer, nullable=True)
-    e = db.Column(db.Integer, nullable=True)
-    s = db.Column(db.Integer, nullable=True)
+    n = db.Column(db.String, nullable=True)
+    w = db.Column(db.String, nullable=True)
+    e = db.Column(db.String, nullable=True)
+    s = db.Column(db.String, nullable=True)
     elevation = db.Column(db.Integer, nullable=True)
     terrain = db.Column(db.String(80), nullable=False)
 
