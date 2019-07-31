@@ -35,7 +35,9 @@ class AutoTraverse(Resource):
             new_player_data = {
                 "password": token,
                 "currentRoomId": player_status_response['room_id'],
-                "currentPath": None,
+                "currentPath": '{"path": []}',
+                "nextAvailableMove": 0,
+                "singlePath": False
             }
 
             foundTraversingPlayer = PlayerModel(**new_player_data)
