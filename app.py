@@ -7,6 +7,7 @@ from flask_restful import Api
 from resources.room import Room
 from resources.rooms import Rooms
 from resources.traverse import Traverse
+from resources.autotraverse import AutoTraverse
 
 load_dotenv()
 
@@ -26,7 +27,7 @@ def create_tables():
 api.add_resource(Rooms, '/rooms')
 api.add_resource(Room, '/room/<string:id>')
 api.add_resource(Traverse, '/traverse/<string:direction>')
-
+api.add_resource(AutoTraverse, '/autotraverse')
 
 if __name__ == '__main__':
     app.run(port=os.getenv("PORT"), debug=True)
