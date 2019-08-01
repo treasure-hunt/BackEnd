@@ -46,7 +46,7 @@ class TargetTravel(Thread):
                         traverse_to_room = traverse_to_room[0]
 
                         if len(traverse_to_room['errors']) > 0:
-                            setattr(player, 'nextAvailableMove', (int(time.time()) + int(traverse_to_room['cooldown'])))
+                            setattr(player, 'nextAvailableMove', (int(time.time()) + int(traverse_to_room['cooldown'])) + 1)
                             player.save_to_db()
                             continue
 
