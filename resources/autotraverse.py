@@ -50,7 +50,7 @@ class AutoTraverse(Resource):
         token = request.headers.get('authorization')
 
         if not token:
-                return {'error': True, 'message': 'Missing token in authorization header.'}, 401
+            return {'error': True, 'message': 'Missing token in authorization header.'}, 401
 
         deletePlayer = PlayerModel.find_by_password(token)
         

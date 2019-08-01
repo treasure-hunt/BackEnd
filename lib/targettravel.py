@@ -35,9 +35,9 @@ class TargetTravel(Thread):
                 for player in traversing_players:
                     player_data = player.json()
                     # Only register next move if the player is passed cooldown.
-                    if int(time.time()) < player_data['nextAvailableMove'] + 3:
-                        continue
-                    print(player_data["currentPath"])
+                    if int(time.time()) < player_data['nextAvailableMove'] + 2:
+                        time.sleep(player_data['nextAvailableMove'] + 1 - int(time.time()))
+
                     player_path = json.loads(player_data["currentPath"])["path"]
                     # Player has a path, travel based on it.
                     if len(player_path) > 0:
@@ -46,7 +46,8 @@ class TargetTravel(Thread):
                         traverse_to_room = traverse_to_room[0]
 
                         if len(traverse_to_room['errors']) > 0:
-                            setattr(player, 'nextAvailableMove', (int(time.time()) + int(traverse_to_room['cooldown'])) + 1)
+                            print(traverse_to_room['errors'], "ERROR")
+                            setattr(player, 'nextAvailableMove', (int(time.time())+ int(traverse_to_room['cooldown'])))
                             player.save_to_db()
                             continue
 
@@ -59,4 +60,5 @@ class TargetTravel(Thread):
                         # return traverse_to_room
                     
                     else:
+                        print("player has finished traversal")
                         player.delete_from_db()

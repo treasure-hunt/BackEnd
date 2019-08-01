@@ -28,11 +28,13 @@ class Traverse(Resource):
             "w": "e"
         }
 
+        time.sleep(1)
         # Get the room the player is currently in:
         player_status_response = requests.get(
             'https://lambda-treasure-hunt.herokuapp.com/api/adv/init/', headers={'authorization': token}).json()
         if len(player_status_response['errors']) > 0:
             return player_status_response, 400
+            
         time.sleep(1)
         # if the direction the player wants to move is in their current rooms direction list (if its a possible direction to move)
         if move in player_status_response["exits"]:
