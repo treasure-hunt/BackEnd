@@ -60,3 +60,4 @@ class AutoTraverse(Resource):
         deletePlayer.delete_from_db()
 
         return {'Message': 'Auto Traverse has been stopped.'}
+
