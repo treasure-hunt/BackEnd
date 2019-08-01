@@ -8,7 +8,9 @@ from resources.room import Room
 from resources.rooms import Rooms
 from resources.traverse import Traverse
 from resources.autotraverse import AutoTraverse
+from resources.targettraverse import TargetTraverse
 from lib.autotravel import AutoTravel
+from lib.targettravel import TargetTravel
 
 load_dotenv()
 
@@ -27,12 +29,14 @@ def create_tables():
 
 # Start our AutoTravel process on a separate "thread"
 AutoTravel(app)
+TargetTravel(app)
 
 
 api.add_resource(Rooms, '/rooms')
 api.add_resource(Room, '/room/<string:id>')
 api.add_resource(Traverse, '/traverse/<string:direction>')
 api.add_resource(AutoTraverse, '/autotraverse')
+api.add_resource(TargetTraverse, '/autotraverse/<string:id>')
 
 if __name__ == '__main__':
     app.run(port=os.getenv("PORT"), debug=False)

@@ -1,6 +1,5 @@
 from db import db
 
-
 class PlayerModel(db.Model):
     __tablename__ = "players"
 
@@ -35,6 +34,10 @@ class PlayerModel(db.Model):
     @classmethod
     def find_all(cls):
         return cls.query.all()
+
+    @classmethod
+    def find_all_by_single_path(cls, singlePath):
+        return cls.query.filter_by(singlePath = singlePath).all()
 
     def save_to_db(self):
         db.session.add(self)
