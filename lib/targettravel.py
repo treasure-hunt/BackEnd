@@ -37,6 +37,7 @@ class TargetTravel(Thread):
                     # Only register next move if the player is passed cooldown.
                     if int(time.time()) < player_data['nextAvailableMove'] + 2:
                         time.sleep(player_data['nextAvailableMove'] + 1 - int(time.time()))
+
                     player_path = json.loads(player_data["currentPath"])["path"]
                     # Player has a path, travel based on it.
                     if len(player_path) > 0:
