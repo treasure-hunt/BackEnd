@@ -11,28 +11,33 @@ class GraphTraversal:
         rooms_dict = {}
         # make all rooms represent their JSON object, and insert into rooms dict.
         for i in range(len(all_rooms)):
-            all_rooms[i] = all_rooms[i].json()
-            rooms_dict[all_rooms['id']] = all_rooms[i]
-        
+            rooms_dict[str(all_rooms[i].json()['id'])] = all_rooms[i].json()
+
         visited_rooms = set()
         queue = []
         path = []
-        room = rooms_dict[current_room]
+        room = current_room  #id of room
         queue.append([room])
 
         while len(queue) > 0:
             current_path = queue.pop(0)
             prev_room = current_path[-1]
-            if prev_room['id'] not in visited_rooms:
-                visited_rooms.add(prev_room['id'])
-                for exit_dir in rooms_dict[prev_room]['exits']:
-                    new_path = current_path[:]
-                    new_path.append(rooms_dict[prev_room]['exits'][exit_dir])
-                    if rooms_dict[prev_room]['exits'][exit_dir] == str(target_room):
-                        return self.create_path(rooms_dict, current_path)
-                    else:
-                        queue.append(new_path)
-                        path.append(exit_dir)
+            if prev_room is not None:
+                if prev_room not in visited_rooms:
+                    visited_rooms.add(str(prev_room))
+                    print(rooms_dict[str(prev_room)]['exits'])
+                    for exit_dir in rooms_dict[str(prev_room)]['exits']:
+                        if rooms_dict[str(prev_room)]['exits'][exit_dir] == "?":
+                            continue
+                        new_path = current_path[:]
+                        new_path.append(rooms_dict[str(prev_room)]['exits'][exit_dir])
+                        if rooms_dict[str(prev_room)]['exits'][exit_dir] == str(target_room):
+                            path = {"path": self.create_path(rooms_dict, current_path)}
+                            path["path"].append(exit_dir)
+                            return path
+                        else:
+                            queue.append(new_path)
+                            path.append(exit_dir)
         # no path found. return None
         return None
 
@@ -81,5 +86,6 @@ class GraphTraversal:
             index += 1
         
         return directions
+        
         
 
