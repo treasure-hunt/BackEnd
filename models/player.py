@@ -29,6 +29,7 @@ class PlayerModel(db.Model):
 
     @classmethod
     def find_by_password(cls, password):
+    
         return cls.query.filter_by(password=password).first()
 
     @classmethod
