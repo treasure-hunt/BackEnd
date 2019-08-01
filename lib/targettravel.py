@@ -1,5 +1,6 @@
 import time
 import json
+from sqlalchemy import orm
 from threading import Thread
 from models.room import RoomModel
 from models.player import PlayerModel
@@ -16,6 +17,13 @@ class TargetTravel(Thread):
         self.GraphTraversal = GraphTraversal()
         self.app = app
         self.start()
+
+    def save_player(self, player):
+        player_data = player.json()
+        find_player = player.find_by_password(player_data["password"])
+        
+        if find_player:
+            find_player.save_to_db()
 
     def run(self):
         self.start_loop()
@@ -45,19 +53,25 @@ class TargetTravel(Thread):
                         traverse_to_room = traverse_to_room[0]
 
                         if len(traverse_to_room['errors']) > 0:
-                            print(traverse_to_room['errors'], "ERROR")
-                            setattr(player, 'nextAvailableMove', (int(time.time())+ int(traverse_to_room['cooldown'])))
-                            player.save_to_db()
+                            print(traverse_to_room['errors'], "ERROR", traverse_to_room['cooldown'])
+                            setattr(player, 'nextAvailableMove', (int(time.time()) + 2 + int(traverse_to_room['cooldown'])))
+                            self.save_player(player)
+                            # player.save_to_db()
                             continue
 
-                        setattr(player, 'nextAvailableMove', int(time.time()) + int(traverse_to_room['cooldown']))
+                        setattr(player, 'nextAvailableMove', int(time.time()) + 2 + int(traverse_to_room['cooldown']))
                         setattr(player, 'currentRoomId', traverse_to_room['room_id'])
                         setattr(player, 'currentPath', json.dumps({"path": player_path})) 
-                        player.save_to_db()
+                        # player.save_to_db()
+                        self.save_player(player)
                         print(f"player traveled {direction} to {traverse_to_room['room_id']}")
                         continue
                         # return traverse_to_room
                     
                     else:
                         print("player has finished traversal")
-                        player.delete_from_db()
+                        delete_player = player.find_by_password(player_data["password"])
+                        print(delete_player, "tester")
+                        if delete_player:
+                            delete_player.delete_from_db()
+
