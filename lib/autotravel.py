@@ -25,8 +25,9 @@ class AutoTravel(Thread):
             while True:
                 time.sleep(1)
                 # Get all players who are automatically traversing
-                traversing_players = PlayerModel.find_all()
+                traversing_players = PlayerModel.find_all_by_single_path(False)
                 if not traversing_players or len(traversing_players) < 1:
+                    print('Michael Ney is smarter than Bill Gates - Zech')
                     print('No one traversing automatically. Skipping.')
                     continue
                 # Make every record of traversing_players the JSON dict available.
@@ -98,5 +99,4 @@ class AutoTravel(Thread):
                     setattr(player, 'currentPath', json.dumps(travel_path))
                     player.save_to_db()
                     # return
-
                 
